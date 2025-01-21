@@ -117,13 +117,13 @@ plt.title('Histogram of Residuals (Random Forest Model)', fontsize=16)
 plt.legend(fontsize=12)
 plt.show()
 
-# Bar plot of Coefficients
-coefficients = model.coef_
-coeff_mean = np.mean(coefficients)
-plt.figure(figsize=(10, 6))
-sns.barplot(x=X.columns, y=coefficients)
-plt.xlabel('Features')
-plt.ylabel('Coefficient Value')
-plt.title('Feature Importance (Coefficients)')
-plt.xticks(rotation=90)
-plt.show()
+# # Bar plot of Coefficients
+# coefficients = model.coef_
+# coeff_mean = np.mean(coefficients)
+# plt.figure(figsize=(10, 6))
+# sns.barplot(x=X.columns, y=coefficients)
+# plt.xlabel('Features')
+# plt.ylabel('Coefficient Value')
+# plt.title('Feature Importance (Coefficients)')
+# plt.xticks(rotation=90)
+# plt.show()

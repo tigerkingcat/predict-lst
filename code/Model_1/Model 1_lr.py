@@ -23,8 +23,8 @@ print(df.info())
     #sns.heatmap(correlation_corr, annot=True)
     #plt.show()
     #print(correlation_corr[(correlation_corr>0.3) | (correlation_corr<-0.3)])
-df.drop(columns=['ALAND', 'AWATER', 'INTPTLAT', 'INTPTLON', 'MTFCC', 'NAMELSAD', 'STATEFP', 'COUNTYFP', 'TRACTCE', 'BLKGRPCE', 'GRIDCODE', 'koppen_code', 'GEOIDFQ', 'FUNCSTAT'], inplace=True)
-df['urban_rural_classification'].replace(to_replace=pd.NA, value='R', inplace=True)
+df.drop(columns=['ALAND', 'AWATER', 'INTPTLAT', 'INTPTLON', 'MTFCC', 'NAMELSAD', 'STATEFP', 'COUNTYFP', 'TRACTCE', 'BLKGRPCE', 'GRIDCODE', 'koppen_code', 'GEOIDFQ', 'FUNCSTAT', 'Population_Below_Poverty'], inplace=True)
+df['urban_rural_classification'] = df['urban_rural_classification'].replace(to_replace=pd.NA, value='R')
 
 # 2. Create Lag Variables for ISA and NDWI
 # Create lagged variables for ISA and NDWI to capture how past values of impervious surfaces and vegetation affect current LST (e.g., use a 1-year lag).
