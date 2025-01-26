@@ -28,8 +28,10 @@ print(df.info())
 # correlation matricies
 df = df.drop(columns=['GEOIDFQ', 'NAMELSAD', 'MTFCC', 'FUNCSTAT', 'koppen_code'])
 df.drop(columns=['ALAND', 'AWATER', 'INTPTLAT', 'INTPTLON', 'STATEFP', 'COUNTYFP', 'TRACTCE', 'BLKGRPCE', 'GRIDCODE', 'latitude', 'longitude', 'State', 'County', 'Tract', 'Block Group'], inplace=True)
+df = df[df['impervious'] > 30]
+# sns.scatterplot(data=df, x='LST_Celsius', y='Pv', hue='climate_category')
+sns.scatterplot(data=df, x='LST_Celsius', y='Median_Housing_Value', hue='impervious')
 
-sns.scatterplot(data=df, x='LST_Celsius', y='Median_Household_Income')
 
 # 2. Create Lag Variables for ISA and NDWI
 # Create lagged variables for ISA and NDWI to capture how past values of impervious surfaces and vegetation affect current LST (e.g., use a 1-year lag).
