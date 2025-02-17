@@ -12,6 +12,7 @@ from sklearn.preprocessing import OneHotEncoder
 
 # 1.  Load the data
 df = pd.read_csv(r'../../data/final-model-data/merged_environmental_census_data_for_prediction.csv')
+df.drop(columns='Population_Below_Poverty', inplace=True)
 df = df[~df.isin([-666666666]).any(axis=1)]
 print(df.info())
 
@@ -23,7 +24,10 @@ categorical_columns = df.select_dtypes(include=['object']).columns.tolist()
 correlation = df.drop(columns=categorical_columns)
 correlation_corr = correlation.corr()
 
+df = df[df['year'] == 2021]
+
 mean_year = df['year'].mean()
+print('mean year', mean_year)
 df['year_centered'] = df['year'].apply(lambda year: year - mean_year)
 categorical_columns = df.select_dtypes(include=['object']).columns.tolist()
 encoder = OneHotEncoder(sparse_output=False)
@@ -34,16 +38,20 @@ df_encoded = df_encoded.drop(categorical_columns, axis=1)
 print(df_encoded.info())
 print(df_encoded.columns)
 
+# df_encoded = df_encoded[df_encoded['year'] == 2021]
+
+
 # 5. Prepare the Data for Modeling
 # Ensure all variables are in the appropriate format (no need to manually create a feature matrix). Your dataset should include all environmental variables, lag variables, and the year-centered variable.
-df_encoded.drop(columns='Population_Below_Poverty', inplace=True)
-df_encoded['Median_Housing_Value'] = df_encoded['Median_Housing_Value'] * 0.80
 
-# df_encoded['Pv'] = df_encoded['Pv'] * 1.20
+df_encoded['Median_Housing_Value'] = df_encoded['Median_Housing_Value'] * 1.20
 
+df_encoded['Pv'] = (df_encoded['Pv'] * 1.20).clip(upper=1.0)
 
+print(df_encoded.info())
 
-df_encoded = df_encoded.dropna().reset_index(drop=True)
+#df_encoded = df_encoded.dropna().reset_index(drop=True)
+print(df_encoded)
 
 input_data = df_encoded[
     ['impervious', 'Pv', 'NDWI', 'elev', 'climate_category_Arid (Cold)', 'climate_category_Arid (Hot)',
@@ -51,7 +59,7 @@ input_data = df_encoded[
      'urban_rural_classification_nan', 'Median_Household_Income', 'High_School_Diploma_25plus',
      'Unemployment', 'Median_Housing_Value', 'Median_Gross_Rent', 'Renter_Occupied_Housing_Units', 'Total_Population',
      'Median_Age', 'Per_Capita_Income', 'Families_Below_Poverty',
-     'year_centered']]
+     'year']]
 
 with open('model3_rf_trained_model_1.pkl', 'rb') as file:
     model = pickle.load(file)
@@ -61,8 +69,15 @@ predictions = model.predict(input_data)
 df_encoded['predictions'] = predictions
 df_encoded['difference'] = df_encoded['LST_Celsius'] - df_encoded['predictions']
 
+mean_temp_diff = df_encoded['difference'].mean()
+median_temp_diff = df_encoded['difference'].median()
+
+print(f'Median temperature difference {median_temp_diff}')
+
+print(f'Mean temperature difference {mean_temp_diff}')
+
 # 7. Save or print the results
-df_encoded.to_csv('predictions_output_median_housing_val_decreased_by_20pct.csv', index=False)
+df_encoded.to_csv('predictions_output_median_housing_and_Pv_increased_by_20pct_pv_capped_at_1.csv', index=False)
 
 # 6. Add predictions to the DataFrame (optional)
 print(predictions)
